@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 function ChevronLeftIcon({ className }: { className?: string }) {
   return (
@@ -70,16 +70,17 @@ const NOTICES = [
 
 function ProgramCard({ image, caption }: { image: string; caption: string }) {
   return (
-    <figure className="overflow-hidden rounded-2xl border border-[#8B1A1A]/10 bg-white shadow-md transition-all hover:-translate-y-1 hover:shadow-lg">
-      <div className="relative h-40 sm:h-44 w-full overflow-hidden bg-gray-100">
+    <figure className="overflow-hidden rounded-2xl border border-[#8B1A1A]/10 bg-white shadow-md transition-all hover:-translate-y-1 hover:shadow-lg h-full flex flex-col">
+      <div className="relative w-full overflow-hidden bg-gray-100" style={{ paddingBottom: "65%" }}>
         <img
           src={image}
           alt={caption}
-          className="h-full w-full object-cover"
+          className="absolute inset-0 h-full w-full object-cover"
+          loading="lazy"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#5e0f0f]/40 via-transparent to-transparent" />
       </div>
-      <figcaption className="p-4 sm:p-5 text-xs sm:text-sm leading-relaxed sm:leading-6 text-gray-700 line-clamp-3">
+      <figcaption className="p-3 sm:p-4 md:p-5 text-xs sm:text-sm leading-relaxed text-gray-700 flex-1">
         {caption}
       </figcaption>
     </figure>
@@ -87,9 +88,67 @@ function ProgramCard({ image, caption }: { image: string; caption: string }) {
 }
 
 export default function Programs() {
-  const hasMoreThanThree = PROGRAMS.length > 3;
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
   const scrollerRef = useRef<HTMLDivElement>(null);
+  const touchStartX = useRef<number>(0);
+  const touchEndX = useRef<number>(0);
 
+  // Check if mobile
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  const totalPrograms = PROGRAMS.length;
+  const hasMoreThanThree = totalPrograms > 3;
+
+  // For mobile: show one card at a time with dots
+  const nextSlide = () => {
+    setCurrentIndex((prev) => (prev + 1) % totalPrograms);
+  };
+
+  const prevSlide = () => {
+    setCurrentIndex((prev) => (prev - 1 + totalPrograms) % totalPrograms);
+  };
+
+  const goToSlide = (index: number) => {
+    setCurrentIndex(index);
+  };
+
+  // Auto-play for mobile
+  useEffect(() => {
+    if (!isMobile || !hasMoreThanThree) return;
+    
+    const interval = setInterval(() => {
+      nextSlide();
+    }, 4000);
+    
+    return () => clearInterval(interval);
+  }, [isMobile, hasMoreThanThree]);
+
+  // Touch handlers for mobile
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    touchEndX.current = e.changedTouches[0].clientX;
+    const diff = touchStartX.current - touchEndX.current;
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) {
+        nextSlide();
+      } else {
+        prevSlide();
+      }
+    }
+  };
+
+  // Desktop scroll
   const scrollByOneCard = (direction: "left" | "right") => {
     const el = scrollerRef.current;
     if (!el) return;
@@ -104,8 +163,9 @@ export default function Programs() {
     });
   };
 
+  // Desktop auto-scroll
   useEffect(() => {
-    if (!hasMoreThanThree) return;
+    if (isMobile || !hasMoreThanThree) return;
 
     const intervalId = setInterval(() => {
       const el = scrollerRef.current;
@@ -125,13 +185,16 @@ export default function Programs() {
       } else {
         el.scrollBy({ left: step, behavior: "smooth" });
       }
-    }, 3000);
+    }, 4000);
 
     return () => clearInterval(intervalId);
-  }, [hasMoreThanThree]);
+  }, [isMobile, hasMoreThanThree]);
+
+  // Get current program for mobile
+  const currentProgram = PROGRAMS[currentIndex];
 
   return (
-    <section id="programs" className="relative bg-white py-16 sm:py-20 border-t border-[#8B1A1A]/10 overflow-hidden">
+    <section id="programs" className="relative bg-white py-12 sm:py-16 md:py-20 border-t border-[#8B1A1A]/10 overflow-hidden">
 
       <style>{`
         .programs-scroller {
@@ -143,18 +206,19 @@ export default function Programs() {
         }
       `}</style>
 
+      {/* Background elements */}
       <div
-        className="absolute inset-0 z-0 bg-cover bg-center opacity-[0.15] sm:opacity-[0.20]"
+        className="absolute inset-0 z-0 bg-cover bg-center opacity-[0.12] sm:opacity-[0.15] md:opacity-[0.20]"
         style={{ backgroundImage: "url('/images/bg.jpg')" }}
       />
 
       <div className="absolute inset-0 z-0 pointer-events-none">
-        <div className="absolute -top-24 -left-24 h-64 w-64 sm:h-96 sm:w-96 rounded-full bg-[#8B1A1A]/5 blur-3xl" />
-        <div className="absolute -bottom-24 -right-24 h-64 w-64 sm:h-96 sm:w-96 rounded-full bg-[#8B1A1A]/5 blur-3xl" />
+        <div className="absolute -top-24 -left-24 h-48 w-48 sm:h-64 sm:w-64 md:h-96 md:w-96 rounded-full bg-[#8B1A1A]/5 blur-3xl" />
+        <div className="absolute -bottom-24 -right-24 h-48 w-48 sm:h-64 sm:w-64 md:h-96 md:w-96 rounded-full bg-[#8B1A1A]/5 blur-3xl" />
       </div>
 
       <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid gap-10 sm:gap-12 lg:grid-cols-[1.6fr_1fr]">
+        <div className="grid gap-8 sm:gap-10 md:gap-12 lg:grid-cols-[1.6fr_1fr]">
 
           {/* Left: Programs */}
           <div>
@@ -163,52 +227,93 @@ export default function Programs() {
                 <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.2em] sm:tracking-[0.25em] text-[#8B1A1A]">
                   झलक
                 </span>
-                <h2 className="mt-2 sm:mt-3 font-display text-2xl sm:text-3xl font-bold text-gray-900">
+                <h2 className="mt-1 sm:mt-2 md:mt-3 font-display text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900">
                   कार्यक्रम
                 </h2>
               </div>
 
-              {hasMoreThanThree && (
+              {!isMobile && hasMoreThanThree && (
                 <div className="flex shrink-0 gap-1.5 sm:gap-2">
                   <button
                     type="button"
                     aria-label="अघिल्लो कार्यक्रम"
                     onClick={() => scrollByOneCard("left")}
-                    className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full border border-[#8B1A1A]/20 text-[#8B1A1A] transition-colors hover:bg-[#8B1A1A]/10"
+                    className="flex h-8 w-8 sm:h-9 sm:w-9 md:h-10 md:w-10 items-center justify-center rounded-full border border-[#8B1A1A]/20 text-[#8B1A1A] transition-colors hover:bg-[#8B1A1A]/10"
                   >
-                    <ChevronLeftIcon className="h-4 w-4 sm:h-5 sm:w-5" />
+                    <ChevronLeftIcon className="h-4 w-4 sm:h-4.5 sm:w-4.5 md:h-5 md:w-5" />
                   </button>
                   <button
                     type="button"
                     aria-label="अर्को कार्यक्रम"
                     onClick={() => scrollByOneCard("right")}
-                    className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full border border-[#8B1A1A]/20 text-[#8B1A1A] transition-colors hover:bg-[#8B1A1A]/10"
+                    className="flex h-8 w-8 sm:h-9 sm:w-9 md:h-10 md:w-10 items-center justify-center rounded-full border border-[#8B1A1A]/20 text-[#8B1A1A] transition-colors hover:bg-[#8B1A1A]/10"
                   >
-                    <ChevronRightIcon className="h-4 w-4 sm:h-5 sm:w-5" />
+                    <ChevronRightIcon className="h-4 w-4 sm:h-4.5 sm:w-4.5 md:h-5 md:w-5" />
                   </button>
                 </div>
               )}
             </div>
 
-            {hasMoreThanThree ? (
+            {/* Mobile: Single card with dots */}
+            {isMobile && hasMoreThanThree ? (
+              <div 
+                className="mt-4 sm:mt-6"
+                onTouchStart={handleTouchStart}
+                onTouchEnd={handleTouchEnd}
+              >
+                <div className="relative">
+                  <ProgramCard 
+                    image={currentProgram.image} 
+                    caption={currentProgram.caption} 
+                  />
+                  
+                  {/* Navigation arrows for mobile */}
+                  <button
+                    onClick={prevSlide}
+                    className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/90 backdrop-blur-sm rounded-full p-1.5 shadow-lg border border-[#8B1A1A]/10 hover:bg-white"
+                    aria-label="Previous"
+                  >
+                    <ChevronLeftIcon className="h-4 w-4 text-[#8B1A1A]" />
+                  </button>
+                  <button
+                    onClick={nextSlide}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/90 backdrop-blur-sm rounded-full p-1.5 shadow-lg border border-[#8B1A1A]/10 hover:bg-white"
+                    aria-label="Next"
+                  >
+                    <ChevronRightIcon className="h-4 w-4 text-[#8B1A1A]" />
+                  </button>
+                </div>
+                
+                {/* Dots indicator */}
+                <div className="flex justify-center gap-1.5 mt-4 sm:mt-5">
+                  {PROGRAMS.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => goToSlide(index)}
+                      className={`h-1.5 rounded-full transition-all ${
+                        index === currentIndex 
+                          ? 'w-6 bg-[#8B1A1A]' 
+                          : 'w-1.5 bg-[#8B1A1A]/30 hover:bg-[#8B1A1A]/50'
+                      }`}
+                      aria-label={`Go to slide ${index + 1}`}
+                    />
+                  ))}
+                </div>
+              </div>
+            ) : (
+              /* Desktop/Tablet: Horizontal scroll */
               <div
                 ref={scrollerRef}
-                className="programs-scroller mt-6 sm:mt-8 flex snap-x snap-mandatory gap-4 sm:gap-6 overflow-x-auto scroll-smooth"
+                className="programs-scroller mt-4 sm:mt-6 md:mt-8 flex snap-x snap-mandatory gap-4 sm:gap-5 md:gap-6 overflow-x-auto scroll-smooth"
               >
                 {PROGRAMS.map((program) => (
                   <div
                     key={program.caption}
                     data-program-card
-                    className="w-[85%] shrink-0 snap-start sm:w-[calc((100%-1rem)/2)] md:w-[calc((100%-1.5rem)/2)] lg:w-[calc((100%-3rem)/3)]"
+                    className="w-[80%] sm:w-[calc(50%-0.625rem)] md:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)] shrink-0 snap-start"
                   >
                     <ProgramCard image={program.image} caption={program.caption} />
                   </div>
-                ))}
-              </div>
-            ) : (
-              <div className="mt-6 sm:mt-8 grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-                {PROGRAMS.map((program) => (
-                  <ProgramCard key={program.caption} image={program.image} caption={program.caption} />
                 ))}
               </div>
             )}
@@ -219,21 +324,26 @@ export default function Programs() {
             <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.2em] sm:tracking-[0.25em] text-[#8B1A1A]">
               जरुरी
             </span>
-            <h2 className="mt-2 sm:mt-3 font-display text-2xl sm:text-3xl font-bold text-gray-900">
+            <h2 className="mt-1 sm:mt-2 md:mt-3 font-display text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900">
               सूचना
             </h2>
-            <ul className="mt-6 sm:mt-8 divide-y divide-[#8B1A1A]/10 overflow-hidden rounded-2xl border border-[#8B1A1A]/10 bg-white shadow-md">
-              {NOTICES.map((notice) => (
-                <li key={notice}>
-                  <a href="notices" className="flex items-start gap-3 px-4 py-3 sm:px-5 sm:py-4 text-xs sm:text-sm leading-relaxed sm:leading-6 text-gray-700 transition-all hover:bg-[#8B1A1A]/5 hover:text-[#8B1A1A] group">
-                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#8B1A1A]" />
-                    <span className="group-hover:underline decoration-[#8B1A1A]/30 underline-offset-4 line-clamp-2 sm:line-clamp-3">
-                      {notice}
-                    </span>
-                  </a>
-                </li>
+            
+            <div className="mt-4 sm:mt-6 md:mt-8 divide-y divide-[#8B1A1A]/10 overflow-hidden rounded-2xl border border-[#8B1A1A]/10 bg-white shadow-md">
+              {NOTICES.map((notice, index) => (
+                <a 
+                  key={notice}
+                  href="notices" 
+                  className={`flex items-start gap-2 sm:gap-3 px-3 sm:px-4 md:px-5 py-3 sm:py-3.5 md:py-4 text-xs sm:text-sm leading-relaxed text-gray-700 transition-all hover:bg-[#8B1A1A]/5 hover:text-[#8B1A1A] group ${
+                    index === 0 ? '' : ''
+                  }`}
+                >
+                  <span className="mt-1.5 h-1.5 w-1.5 min-w-[6px] rounded-full bg-[#8B1A1A]" />
+                  <span className="group-hover:underline decoration-[#8B1A1A]/30 underline-offset-4 line-clamp-2 sm:line-clamp-3">
+                    {notice}
+                  </span>
+                </a>
               ))}
-            </ul>
+            </div>
           </div>
         </div>
       </div>
