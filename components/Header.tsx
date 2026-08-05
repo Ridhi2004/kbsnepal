@@ -6,13 +6,13 @@ import Image from "next/image";
 const NAV_LINKS = [
   { label: "हाम्रो बारेमा", href: "about" },
   { label: "कार्यसमिति पदाधिकारीहरु", href: "committee" },
-  { label: "भेग प्रतिनिधिहरु", href: "#representatives" },
+  { label: "भेग प्रतिनिधिहरु", href: "representatives" },
   { label: "कार्यक्रम", href: "#programs" },
   { label: "सूचना", href: "#notices" },
   { label: "जानकारी", href: "#news" },
   { label: "ग्यालरी", href: "#gallery" },
-  { label: "उद्देश्य", href: "#objectives" },
-  { label: "आजको बजार मूल्य", href: "#prices" },
+  { label: "उद्देश्य", href: "objectives" },
+  { label: "आजको बजार मूल्य", href: "prices" },
   { label: "सुझाब", href: "#suggestions" },
 ];
 
@@ -123,7 +123,7 @@ export default function Header() {
 
         {/* Contact CTA (desktop) */}
         <a
-          href="#contact"
+          href="contact"
           className="hidden lg:inline-flex shrink-0 items-center rounded-full bg-[#8B1A1A] px-4 py-1.5 sm:px-5 sm:py-2 text-xs sm:text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-[#a02020] hover:shadow-md hover:scale-105 active:scale-95"
         >
           सम्पर्क
