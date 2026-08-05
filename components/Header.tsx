@@ -13,7 +13,7 @@ const NAV_LINKS = [
   { label: "ग्यालरी", href: "#gallery" },
   { label: "उद्देश्य", href: "objectives" },
   { label: "आजको बजार मूल्य", href: "prices" },
-  { label: "सुझाब", href: "#suggestions" },
+  { label: "सुझाब", href: "suggestions" },
 ];
 
 export default function Header() {
@@ -176,7 +176,7 @@ export default function Header() {
             ))}
             <li className="pt-2">
               <a
-                href="#contact"
+                href="contact"
                 onClick={() => setOpen(false)}
                 className="inline-flex w-full items-center justify-center rounded-lg bg-[#8B1A1A] px-4 py-3 text-sm sm:text-base font-semibold text-white shadow-sm transition-all duration-200 hover:bg-[#a02020] hover:shadow-md active:scale-95"
               >
