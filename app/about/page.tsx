@@ -52,8 +52,9 @@ export default function AboutPage() {
 
             <div className="mt-8 p-6 rounded-2xl bg-[#8B1A1A]/5 border border-[#8B1A1A]/10">
               <p className="text-[17px] font-medium text-[#8B1A1A] mb-2">📜 हाम्रो मूल मन्त्र</p>
+              {/* --- FIXED: Changed outer double quotes to single curly quotes --- */}
               <p className="text-[17px] text-gray-700 italic">
-                "एकताबद्ध र संगठित प्रयत्नबाट मात्र कुनै पनि वर्ग तथा व्यवसायीहरुको हक हितको संरक्षण हुन सक्छ।"
+                ‘एकताबद्ध र संगठित प्रयत्नबाट मात्र कुनै पनि वर्ग तथा व्यवसायीहरुको हक हितको संरक्षण हुन सक्छ।’
               </p>
             </div>
 
