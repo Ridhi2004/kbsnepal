@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 
 const NAV_LINKS = [
+  { label: "गृह पृष्ठ ", href: "/" },
   { label: "हाम्रो बारेमा", href: "about" },
   { label: "कार्यसमिति पदाधिकारीहरु", href: "committee" },
   { label: "भेग प्रतिनिधिहरु", href: "representatives" },
@@ -77,9 +78,9 @@ export default function Header() {
       {/* Thin tri-tone accent bar */}
       <div className="h-[3px] w-full bg-gradient-to-r from-[#8B1A1A] via-[#8B1A1A] to-[#002B7F]" />
 
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-3 py-2 sm:px-4 sm:py-3 lg:px-6 xl:px-8">
+      <div className="mx-auto flex max-w-8xl items-center justify-between gap-4 px-3 py-2 sm:px-4 sm:py-3 lg:px-6 xl:px-8">
         {/* Logo / Title Area */}
-        <a href="#top" className="group flex shrink-0 items-center gap-2 sm:gap-3 min-w-0">
+        <a href="/" className="group flex shrink-0 items-center gap-2 sm:gap-3 min-w-0">
           <span className="relative flex h-10 w-10 sm:h-12 sm:w-12 shrink-0 items-center justify-center overflow-hidden rounded-full ring-2 ring-[#8B1A1A]/15 transition-all duration-200 group-hover:ring-[#8B1A1A]/35">
             <Image
               src="/images/kbslogo.png"
