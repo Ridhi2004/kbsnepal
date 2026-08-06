@@ -7,7 +7,7 @@ const NAV_LINKS = [
   { label: "हाम्रो बारेमा", href: "about" },
   { label: "कार्यसमिति पदाधिकारीहरु", href: "committee" },
   { label: "भेग प्रतिनिधिहरु", href: "representatives" },
-  { label: "कार्यक्रम", href: "#programs" },
+  { label: "कार्यक्रम", href: "programs" },
   { label: "सूचना", href: "notices" },
   { label: "जानकारी", href: "information" },
   { label: "ग्यालरी", href: "gallery" },
