@@ -10,7 +10,7 @@ const NAV_LINKS = [
   { label: "कार्यक्रम", href: "#programs" },
   { label: "सूचना", href: "notices" },
   { label: "जानकारी", href: "information" },
-  { label: "ग्यालरी", href: "#gallery" },
+  { label: "ग्यालरी", href: "gallery" },
   { label: "उद्देश्य", href: "objectives" },
   { label: "आजको बजार मूल्य", href: "prices" },
   { label: "सुझाब", href: "suggestions" },

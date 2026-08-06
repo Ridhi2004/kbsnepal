@@ -134,18 +134,6 @@ export default function MarketPrices() {
   return (
     <section id="prices" className="relative bg-white py-20 overflow-hidden">
       
-      {/* --- BACKGROUND IMAGE WITH OVERLAY --- */}
-      <div
-        className="absolute inset-0 z-0 pointer-events-none"
-        style={{
-          backgroundImage: "url('/images/increase.jpg')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-          mixBlendMode: "multiply",
-          opacity: "0.30",
-        }}
-      />
 
       {/* Subtle Red Background Glows */}
       <div className="absolute inset-0 z-0 pointer-events-none">
