@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'prices',
     'notices',
     'information',
+    'contact',
 ]
 
 MIDDLEWARE = [
@@ -162,3 +163,13 @@ CKEDITOR_CONFIGS = {
 
 CKEDITOR_UPLOAD_PATH = "uploads/"
 CKEDITOR_ALLOW_NONIMAGE_FILES = False
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'  
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'ridhikakoirala@gmail.com'
+EMAIL_HOST_PASSWORD = ''
+
+

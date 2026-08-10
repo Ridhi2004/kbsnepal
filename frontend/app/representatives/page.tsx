@@ -18,10 +18,10 @@ const REPRESENTATIVES = [
         image: "/images/reps/mukta.jpg" 
       },
       { 
-        name: "रल काजी श्रेष्ठ", 
-        address: "सोल्हा",
-        telephone: "9843967452",
-        mobile: "9841603915",
+        name: "रत्न काजी श्रेष्ठ ", 
+        address: "सोह्रखुट्टे",
+        telephone: "4361220",
+        mobile: "9843694525",
         image: "/images/reps/ral.jpg" 
       },
     ],
@@ -30,17 +30,17 @@ const REPRESENTATIVES = [
     zone: "भेग नं. २",
     members: [
       { 
-        name: "भोवनवर भुवाल", 
-        address: "ठमेल गल्कापाखा",
-        telephone: "48719130",
+        name: "भवीश्वर भुसाल", 
+        address: "ठमेल ",
+        telephone: "4421130",
         mobile: "9841913449",
         image: "/images/reps/bhovanwar.jpg" 
       },
       { 
         name: "रोशन श्रेष्ठ", 
-        address: "ठमेल गल्कापाखा",
-        telephone: "9841207963",
-        mobile: "9841913449",
+        address: " गल्कोपाखा",
+        telephone: "4421130",
+        mobile: "9841207963",
         image: "/images/reps/roshan.jpg" 
       },
     ],
@@ -49,17 +49,17 @@ const REPRESENTATIVES = [
     zone: "भेग नं. ३",
     members: [
       { 
-        name: "बाबुकाजी मानन्हर", 
-        address: "पानीपोखरी लालम्पाट",
-        telephone: "48719197",
-        mobile: "9841014956",
+        name: "बाबुकाजी मानन्धर", 
+        address: "पानीपोखरी ",
+        telephone: "4419197",
+        mobile: "9851049036",
         image: "/images/reps/babukaji.jpg" 
       },
       { 
-        name: "दिनेश तुल्याद", 
-        address: "पानीपोखरी लालम्पाट",
-        telephone: "9841014956",
-        mobile: "9841014956",
+        name: "दिनेश तुलाधार", 
+        address: "लाजिम्पाट",
+        telephone: "4419197",
+        mobile: "9851051158",
         image: "/images/reps/dinesh.jpg" 
       },
     ],
@@ -68,17 +68,17 @@ const REPRESENTATIVES = [
     zone: "भेग नं. ४",
     members: [
       { 
-        name: "द्वारीका दाश", 
+        name: "द्वारीका दाश कारजीत", 
         address: "ज्ञानेश्वर",
-        telephone: "48719522",
-        mobile: "9841211952",
+        telephone: "4415922",
+        mobile: "9841211982",
         image: "/images/reps/dwarika.jpg" 
       },
       { 
-        name: "कारजीत प्रगम मानन्हर", 
+        name: " प्रगम मानन्धर", 
         address: "कमलपोखरी",
-        telephone: "9841211952",
-        mobile: "9841211952",
+        telephone: "4424556",
+        mobile: "9841265111",
         image: "/images/reps/karjeet.jpg" 
       },
     ],
@@ -87,17 +87,17 @@ const REPRESENTATIVES = [
     zone: "भेग नं. ५",
     members: [
       { 
-        name: "राजेन्द्र महजन", 
+        name: "राजेन्द्र महर्जन", 
         address: "डिल्लीबजार",
-        telephone: "9841914956",
-        mobile: "9841914956",
+        telephone: "",
+        mobile: "9849169495",
         image: "/images/reps/rajendra_mahajan.jpg" 
       },
       { 
         name: "रामचन्द्र श्रेष्ठ", 
         address: "डिल्लीबजार",
-        telephone: "9841914956",
-        mobile: "9841914956",
+        telephone: "",
+        mobile: "9841631384",
         image: "/images/reps/ramchandra.jpg" 
       },
     ],
@@ -106,17 +106,17 @@ const REPRESENTATIVES = [
     zone: "भेग नं. ६",
     members: [
       { 
-        name: "रुप नारायण लिमिल्सन", 
-        address: "कालिमाट",
-        telephone: "9841912450",
-        mobile: "9841912450",
+        name: "रुप नारायण तिमिल्सिना ", 
+        address: "कालिमाटी ",
+        telephone: "",
+        mobile: "9851124840",
         image: "/images/reps/rup.jpg" 
       },
       { 
-        name: "अवेश श्रेष्ठ", 
-        address: "टेकेश्वर",
-        telephone: "9841912450",
-        mobile: "9841912450",
+        name: "आर्बेस  श्रेष्ठ", 
+        address: "टंकेश्वर",
+        telephone: "",
+        mobile: "9841412247",
         image: "/images/reps/abesh.jpg" 
       },
     ],
@@ -125,17 +125,17 @@ const REPRESENTATIVES = [
     zone: "भेग नं. ७",
     members: [
       { 
-        name: "रामकृष्ण मानन्हर", 
-        address: "विजयेश्वरी हलचोक अगाडि",
-        telephone: "48200053",
-        mobile: "9841914956",
+        name: "रामकृष्ण मानन्धर", 
+        address: "विजयेश्वरी ",
+        telephone: "4280083",
+        mobile: "9841241492",
         image: "/images/reps/ramkrishna.jpg" 
       },
       { 
-        name: "रविन श्रेष्ठ", 
-        address: "विजयेश्वरी हलचोक अगाडि",
-        telephone: "4821914956",
-        mobile: "9841914956",
+        name: "रविन्द्र श्रेष्ठ", 
+        address: " हलचोक अगाडि",
+        telephone: "4301342",
+        mobile: "9849092597",
         image: "/images/reps/rabin.jpg" 
       },
     ],
