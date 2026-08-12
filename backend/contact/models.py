@@ -1,6 +1,4 @@
 from django.db import models
-
-
 class ContactInfo(models.Model):
     """Model for storing contact information"""
     

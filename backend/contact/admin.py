@@ -1,22 +1,33 @@
+
 from django.contrib import admin
 
-# from .models import ContactMessage
+from .models import ContactInfo
 
-# @admin.register(ContactMessage)
-# class ContactMessageAdmin(admin.ModelAdmin):
-#     list_display = ['name', 'email', 'created_at', 'is_read']
-#     list_filter = ['is_read', 'created_at']
-#     search_fields = ['name', 'email', 'message']
-#     readonly_fields = ['created_at']
-#     ordering = ['-created_at']
-    
-#     actions = ['mark_as_read', 'mark_as_unread']
-    
-#     def mark_as_read(self, request, queryset):
-#         queryset.update(is_read=True)
-#     mark_as_read.short_description = "पढिएको चिन्ह लगाउनुहोस्"
-    
-#     def mark_as_unread(self, request, queryset):
-#         queryset.update(is_read=False)
-#     mark_as_unread.short_description = "नपढिएको चिन्ह लगाउनुहोस्"
 
+@admin.register(ContactInfo)
+class ContactInfoAdmin(admin.ModelAdmin):
+    list_display = [
+        'email',
+        'phone',
+        'is_active',
+        'created_at',
+        'updated_at',
+    ]
+
+    list_filter = [
+        'is_active',
+        'created_at',
+    ]
+
+    search_fields = [
+        'email',
+        'phone',
+        'address',
+    ]
+
+    readonly_fields = [
+        'created_at',
+        'updated_at',
+    ]
+
+    ordering = ['-updated_at']
