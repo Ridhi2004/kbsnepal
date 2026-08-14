@@ -12,24 +12,7 @@ class InfoItemSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = InfoItem
-        fields = [
-            'id',
-            'title',
-            'short_text',
-            'full_content',
-            'image',
-            'image_url',
-            'slug',
-            'is_published',
-            'is_featured',
-            'view_count',
-            'published_date',
-            'created_at',
-            'updated_at',
-            'preview_content',
-            'word_count',
-        ]
-        read_only_fields = ['id', 'view_count', 'created_at', 'updated_at']
+        fields = "__all__"
     
     def get_image_url(self, obj):
         """Get the full URL of the image"""

@@ -10,13 +10,12 @@ class NoticeAdmin(admin.ModelAdmin):
     list_filter = ['is_published', 'is_featured', 'published_date']
     search_fields = ['title', 'full_content', 'date']
     readonly_fields = ['view_count', 'created_at', 'updated_at', 'content_preview']
-    prepopulated_fields = {'slug': ('title',)}
     list_per_page = 20
     ordering = ['-published_date']
     
     fieldsets = (
         ('Notice Information', {
-            'fields': ('title', 'slug', 'date', 'full_content', 'summary')
+            'fields': ('title', 'date', 'full_content', 'summary')
         }),
         ('Publication Status', {
             'fields': ('is_published', 'is_featured', 'published_date')

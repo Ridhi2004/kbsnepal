@@ -1,106 +1,30 @@
+
 "use client";
 
 import { useState, useEffect } from "react";
 
 // --- DATA STRUCTURE ---
-const NOTICES = [
-  {
-    id: 1,
-    title: "नेपाल खुद्रा व्यापार संघका साधारण सदस्यहरुलाई साधारण सभाको सूचना ।",
-    date: "२०८१ असार १५",
-    fullContent: `
-      <p>साधारण सभाको सूचना</p>
-      <p>प्रिय साधारण सदस्यहरु,</p>
-      <p>नेपाल खुद्रा व्यापार संघको विधानको नियम २९ बमोजिम यस संघको ४७ औं वार्षिक साधारण सभा निम्न मिति, समय र स्थानमा आयोजना हुने भएकोले सम्पूर्ण साधारण सदस्यहरुलाई सहभागी हुन हार्दिक अनुरोध गरिन्छ।</p>
-      <p><strong>मिति:</strong> २०८१ असार ३० गते</p>
-      <p><strong>समय:</strong> बिहान ११:०० बजे</p>
-      <p><strong>स्थान:</strong> संघको कार्यालय, टेकु, काठमाडौं</p>
-      <p>कृपया उपस्थित हुनुहुनेछ भन्ने विश्वास छ।</p>
-    `,
-  },
-  {
-    id: 2,
-    title: "अन्तरक्रिया कार्यक्रम",
-    date: "२०८१ असार १०",
-    fullContent: `
-      <p><strong>अन्तरक्रिया कार्यक्रमको सूचना</strong></p>
-      <p>संघको आयोजनामा खुद्रा व्यापारी र उपभोक्ताहरु बीचको सम्बन्ध सुदृढ गर्ने उद्देश्यले एक दिने अन्तरक्रिया कार्यक्रम आयोजना गरिएको छ।</p>
-      <p>कार्यक्रममा आफ्नो बहुमूल्य सुझाव र विचार राख्न सम्पूर्ण सदस्यहरुलाई निमन्त्रणा गरिन्छ।</p>
-      <p><strong>स्थान:</strong> संघको सभाहल, टेकु</p>
-    `,
-  },
-  {
-    id: 3,
-    title: "नेपाल खुद्रा व्यापार संघको नव निर्वाचित भेग प्रतिनिधि ज्यूहरु",
-    date: "२०८१ जेठ २५",
-    fullContent: `
-      <p><strong>नव निर्वाचित भेग प्रतिनिधिहरुको नामावली</strong></p>
-      <p>सम्पूर्ण सदस्यहरुलाई जानकारी गराइन्छ कि यस संघको हालै सम्पन्न निर्वाचनबाट देहायका ज्यूहरु विभिन्न भेगबाट प्रतिनिधि चुनिनु भएको छ:</p>
-      <ul>
-        <li>भेग नं. १ - श्री ज्ञानेन्द्र कर्मी</li>
-        <li>भेग नं. २० - श्री सुरज होना</li>
-        <li>भेग नं. २१ - श्री मनोज श्रेष्ठ, श्री श्याम शंकर डंगोल</li>
-        <li>भेग नं. २२ - श्री बिनोद गोर्खाली, श्री पंच नारायण महर्जन</li>
-        <li>भेग नं. २३ - श्री ध्रुब अधिकारी, श्री पुष्प मानन्धर</li>
-        <li>भेग नं. २४ - श्री धन बहादुर श्रेष्ठ, श्री राजेन्द्र मानन्धर</li>
-        <li>भेग नं. २५ - श्री बिष्णु बहादुर श्रेष्ठ, श्री जयराम सापकोटा</li>
-        <li>भेग नं. २६ - श्री नवराज शर्मा, श्री रमेश कर्माचाय</li>
-        <li>भेग नं. ३३ - श्री धर्मरत्न महर्जन, श्री खेमानन्द न्यौपाने</li>
-      </ul>
-      <p>सबै नवनिर्वाचित प्रतिनिधि ज्यूहरुलाई हार्दिक बधाई ।</p>
-    `,
-  },
-  {
-    id: 4,
-    title: "नापतौलका सामाग्रीहरुको अनुमति पत्र दर्ता नविकरण सम्बन्धि जरुरी सूचना",
-    date: "२०८१ जेठ १५",
-    fullContent: `
-      <p><strong>जरुरी सूचना</strong></p>
-      <p>यस संघका सम्पूर्ण खुद्रा व्यापारीहरुलाई सूचित गरिन्छ कि नापतौलका सामाग्रीहरुको अनुमति पत्र दर्ता नविकरणको म्याद नजिकिएको छ।</p>
-      <p>कृपया आफ्नो नापतौल सामाग्रीहरुको नविकरणका लागि संघको कार्यालयमा सम्पर्क गर्नुहोस् अथवा सम्बन्धित कार्यालयमा गई नविकरण गर्नुहोस्। ढिला गर्दा कानुनी समस्या आउन सक्छ।</p>
-    `,
-  },
-  {
-    id: 5,
-    title: "नेपाल खुद्रा व्यापार संघको सूचना ।",
-    date: "२०८१ जेठ ०१",
-    fullContent: `
-      <p><strong>संघको सूचना</strong></p>
-      <p>नेपाल खुद्रा व्यापार संघले आफ्नो कार्यालय समय नियमित रुपमा सञ्चालन गर्दै आएको छ। कार्यालय समय बिहान १०:०० देखि साँझ ५:०० बजेसम्म रहनेछ।</p>
-      <p>कृपया कार्यालय समय भित्र मात्र सम्पर्क गर्नुहोस्।</p>
-    `,
-  },
-  {
-    id: 6,
-    title: "श्रद्धाञ्जली अर्पण",
-    date: "२०८१ बैशाख ३०",
-    fullContent: `
-      <p><strong>श्रद्धाञ्जली अर्पण</strong></p>
-      <p>यस संघको भेग प्रतिनिधि श्री भरत सत्याल ज्यूको असामयिक देहवसानमा नेपाल खुद्रा व्यापार संघ सम्पूर्ण परिवार गहिरो शोकमा छ।</p>
-      <p>दिवंगत आत्माको चिरशान्तिको कामना गर्दै शोक सन्तप्त परिवारजनमा हार्दिक समवेदना व्यक्त गरिन्छ।</p>
-      <p>प्रभुले उहाँको आत्मालाई शान्ति प्रदान गरुन् ।</p>
-    `,
-  },
-  {
-    id: 7,
-    title: "उपभोक्ता संरक्षण मस्यौदा विधेयक २०७३ बारे वृहत अन्तरक्रिया कार्यक्रमको सूचना",
-    date: "२०८१ बैशाख २५",
-    fullContent: `
-      <p><strong>अन्तरक्रिया कार्यक्रमको सूचना</strong></p>
-      <p>उपभोक्ता संरक्षण मस्यौदा विधेयक २०७३ बारे वृहत अन्तरक्रिया कार्यक्रम आयोजना गरिएको छ।</p>
-      <p>कार्यक्रममा मस्यौदा विधेयकका मुख्य प्रावधानहरु र खुद्रा व्यापारीहरुको भूमिका बारे छलफल गरिनेछ।</p>
-      <p><strong>स्थान:</strong> संघको कार्यालय सभाहल</p>
-      <p><strong>समय:</strong> बिहान ११:०० बजे</p>
-    `,
-  },
-];
+type NoticeItem = {
+  id: number;
+  title: string;
+  date: string;
+  full_content: string;
+  summary: string;
+  preview_content: string;
+  is_published: boolean;
+  is_featured: boolean;
+  read_time: string;
+  published_date: string;
+  created_at: string;
+  updated_at: string;
+};
 
 // --- POPUP MODAL COMPONENT ---
 function NoticePopup({ 
   notice, 
   onClose 
 }: { 
-  notice: typeof NOTICES[0] | null, 
+  notice: NoticeItem | null, 
   onClose: () => void 
 }) {
   // Close modal when clicking outside the content box
@@ -137,13 +61,15 @@ function NoticePopup({
           <h3 className="text-xl font-bold text-[#8B1A1A] leading-tight">
             {notice.title}
           </h3>
-          <span className="mt-1 inline-block text-xs text-gray-400">{notice.date}</span>
+        
         </div>
 
         {/* --- POPUP CONTENT --- */}
         <div 
           className="prose prose-sm prose-gray max-w-none text-gray-700"
-          dangerouslySetInnerHTML={{ __html: notice.fullContent }}
+          dangerouslySetInnerHTML={{ 
+            __html: notice.full_content || notice.preview_content || notice.summary 
+          }}
         />
 
         {/* --- FOOTER CLOSE BUTTON --- */}
@@ -162,7 +88,81 @@ function NoticePopup({
 
 // --- MAIN PAGE ---
 export default function NoticesPage() {
-  const [selectedNotice, setSelectedNotice] = useState<typeof NOTICES[0] | null>(null);
+  const [selectedNotice, setSelectedNotice] = useState<NoticeItem | null>(null);
+  const [notices, setNotices] = useState<NoticeItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch data from backend
+  useEffect(() => {
+    const fetchNotices = async () => {
+      try {
+        setLoading(true);
+        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:8000';
+        const endpoint = `${baseUrl}/api/api/notices/`; // Adjust endpoint as needed
+        
+        console.log('Fetching notices from:', endpoint);
+        
+        const response = await fetch(endpoint);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data: NoticeItem[] = await response.json();
+        
+        // Filter only published items
+        const publishedNotices = data.filter(item => item.is_published !== false);
+        setNotices(publishedNotices);
+        setError(null);
+      } catch (err) {
+        console.error("Error fetching notices:", err);
+        setError(err instanceof Error ? err.message : "Failed to load notices");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchNotices();
+  }, []);
+
+  // Loading state
+  if (loading) {
+    return (
+      <section className="relative bg-white py-24 min-h-screen overflow-hidden">
+        <div className="relative z-10 mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-center items-center min-h-[400px]">
+            <div className="text-center">
+              <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-[#8B1A1A] border-r-transparent"></div>
+              <p className="mt-4 text-gray-600">Loading notices...</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <section className="relative bg-white py-24 min-h-screen overflow-hidden">
+        <div className="relative z-10 mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+            <p className="text-red-600">Error loading notices: {error}</p>
+            <p className="text-sm text-gray-500 mt-2">
+              Attempted to fetch from: {process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:8000'}/api/api/notices/
+            </p>
+            <button 
+              onClick={() => window.location.reload()} 
+              className="mt-4 px-4 py-2 bg-[#8B1A1A] text-white rounded-lg hover:bg-[#6B1414] transition-colors"
+            >
+              Retry
+            </button>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="relative bg-white py-24 min-h-screen overflow-hidden">
@@ -191,17 +191,25 @@ export default function NoticesPage() {
 
         {/* --- NOTICES LIST --- */}
         <div className="rounded-3xl border border-[#8B1A1A]/10 bg-white/80 backdrop-blur-sm shadow-xl shadow-[#8B1A1A]/5 divide-y divide-[#8B1A1A]/10 overflow-hidden">
-          {NOTICES.map((notice) => (
+          {notices.map((notice) => (
             <button
               key={notice.id}
               onClick={() => setSelectedNotice(notice)}
               className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left transition-all hover:bg-[#8B1A1A]/5 group"
             >
-              <div className="flex flex-col">
-                <h3 className="text-base font-medium text-gray-800 group-hover:text-[#8B1A1A] transition-colors">
+              <div className="flex flex-col flex-1 min-w-0">
+                <h3 className="text-base font-medium text-gray-800 group-hover:text-[#8B1A1A] transition-colors line-clamp-2">
                   {notice.title}
                 </h3>
-                <span className="mt-1 text-xs text-gray-400">{notice.date}</span>
+                <div className="mt-1 flex items-center gap-3 text-xs text-gray-400">
+                  <span>{notice.date || new Date(notice.published_date).toLocaleDateString('ne-NP')}</span>
+                  {notice.is_featured && (
+                    <span className="px-2 py-0.5 bg-[#8B1A1A]/10 text-[#8B1A1A] rounded-full text-[10px] font-medium">
+                      विशेष
+                    </span>
+                  )}
+                 
+                </div>
               </div>
               
               {/* Open Icon */}
@@ -211,6 +219,13 @@ export default function NoticesPage() {
             </button>
           ))}
         </div>
+
+        {/* --- EMPTY STATE --- */}
+        {notices.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-gray-500">कुनै सूचनाहरू उपलब्ध छैनन्।</p>
+          </div>
+        )}
 
       </div>
 
