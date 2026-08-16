@@ -98,3 +98,14 @@ class InfoItem(models.Model):
             return self.image.url
         return None
 
+class Program(models.Model):
+    image=models.ImageField(upload_to="program_images/")
+    title=models.CharField(max_length=300,blank=True,null=True)
+    description=models.TextField()
+
+    def __str__(self):
+        return self.title
+
+
+
+

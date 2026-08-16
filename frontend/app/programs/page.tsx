@@ -1,76 +1,34 @@
+
 "use client";
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
 
-// --- PROGRAMS DATA ---
-const PROGRAMS_DATA = [
-  {
-    id: 1,
-    title: "AGM (वार्षिक साधारण सभा)",
-    image: "/images/programs/agm.jpg", // <-- Replace with your image paths
-    shortText: "नेपाल खुद्रा व्यापार संघको वार्षिक साधारण सभा",
-    fullContent: `
-      <p><strong>AGM - वार्षिक साधारण सभा</strong></p>
-      <p>नेपाल खुद्रा व्यापार संघको विधान बमोजिम यस वर्षको वार्षिक साधारण सभा सफलतापूर्वक सम्पन्न भएको छ।</p>
-      <p>सभामा संघको वार्षिक प्रतिवेदन, आय-व्यय विवरण तथा आगामी वर्षको योजनाबारे छलफल गरिएको थियो।</p>
-      <p><strong>मिति:</strong> २०८१ असार ३० गते</p>
-      <p><strong>स्थान:</strong> संघको कार्यालय, टेकु, काठमाडौं</p>
-      <p>सम्पूर्ण सदस्यहरुको सहभागिता र सहयोगको लागि धन्यवाद ।</p>
-    `,
-  },
-  {
-    id: 2,
-    title: "सर्ब सहमती बाट",
-    image: "/images/programs/consensus.jpg",
-    shortText: "नेपाल खुद्रा व्यापार संघको सर्ब सहमती कार्यक्रम",
-    fullContent: `
-      <p><strong>सर्ब सहमती कार्यक्रम</strong></p>
-      <p>नेपाल खुद्रा व्यापार संघको सम्पूर्ण सदस्यहरुको उपस्थितिमा सर्ब सहमतीबाट विभिन्न महत्वपूर्ण निर्णयहरु पारित गरिएको छ।</p>
-      <p>सदस्यहरुले संघको भविष्य, नीति तथा कार्यक्रमहरुबारे आफ्नो बहुमूल्य सुझाव राख्नु भएको थियो।</p>
-    `,
-  },
-  {
-    id: 3,
-    title: "सगुन",
-    image: "/images/programs/sagun.jpg",
-    shortText: "पारम्परिक सगुन कार्यक्रम",
-    fullContent: `
-      <p><strong>सगुन कार्यक्रम</strong></p>
-      <p>नेपाली परम्परा अनुसार संघले आयोजना गरेको सगुन कार्यक्रम सम्पन्न भएको छ।</p>
-      <p>यस कार्यक्रमले सम्पूर्ण सदस्यहरु बीच आपसी सद्भाव र एकता कायम गर्न महत्वपूर्ण भूमिका खेलेको छ।</p>
-    `,
-  },
-  {
-    id: 4,
-    title: "ब्यापारीबारे भएको अन्तरक्रिया कार्यक्रम",
-    image: "/images/programs/interaction-1.jpg",
-    shortText: "व्यापारीहरु बीचको अन्तरक्रिया",
-    fullContent: `
-      <p><strong>व्यापारी अन्तरक्रिया कार्यक्रम</strong></p>
-      <p>खुद्रा व्यापारीहरुको समस्या, चुनौती तथा समाधानका उपायहरुबारे खुला छलफल गरिएको अन्तरक्रिया कार्यक्रम सम्पन्न भएको छ।</p>
-      <p>कार्यक्रममा विभिन्न भेगका व्यापारीहरुले आ-आफ्ना विचार राख्नु भएको थियो।</p>
-    `,
-  },
-  {
-    id: 5,
-    title: "उपभोक्ता को हितमा खद्यान्न का खुद्रा ब्यापारीबारे भएको अन्तरक्रिया कार्यक्रम",
-    image: "/images/programs/interaction-2.jpg",
-    shortText: "उपभोक्ता हित र खुद्रा व्यापारीहरु",
-    fullContent: `
-      <p><strong>उपभोक्ता हित र खुद्रा व्यापारी अन्तरक्रिया</strong></p>
-      <p>उपभोक्ताहरुको हक हित र खुद्रा व्यापारीहरुको भूमिका बारे वृहत छलफल गरिएको अन्तरक्रिया कार्यक्रम सम्पन्न भएको छ।</p>
-      <p>उपभोक्ताहरुलाई गुणस्तरीय र सुलभ सेवा पुर्याउन खुद्रा व्यापारीहरुको भूमिका महत्वपूर्ण रहेको बारे जोड दिइएको थियो।</p>
-    `,
-  },
-];
+// --- DATA STRUCTURE ---
+type ProgramItem = {
+  id: number;
+  title: string;
+  description: string;
+  image: string;
+  // Additional fields that might be in the API response
+  shortText?: string;
+  fullContent?: string;
+  image_url?: string;
+  slug?: string;
+  is_published?: boolean;
+  is_featured?: boolean;
+  view_count?: number;
+  published_date?: string;
+  created_at?: string;
+  updated_at?: string;
+};
 
 // --- POPUP MODAL COMPONENT ---
 function ProgramPopup({ 
   item, 
   onClose 
 }: { 
-  item: typeof PROGRAMS_DATA[0] | null, 
+  item: ProgramItem | null, 
   onClose: () => void 
 }) {
   useEffect(() => {
@@ -104,10 +62,14 @@ function ProgramPopup({
         {/* --- POPUP IMAGE --- */}
         <div className="relative w-full h-48 sm:h-64 rounded-xl overflow-hidden mb-6 bg-gray-100">
           <Image
-            src={item.image}
+            src={item.image_url || item.image || "/images/placeholder.jpg"}
             alt={item.title}
             fill
             className="object-cover"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.src = "/images/placeholder.jpg";
+            }}
           />
         </div>
 
@@ -116,12 +78,19 @@ function ProgramPopup({
           <h3 className="text-xl font-bold text-[#8B1A1A] leading-tight">
             {item.title}
           </h3>
+          {item.published_date && (
+            <p className="text-xs text-gray-400 mt-1">
+              प्रकाशित: {new Date(item.published_date).toLocaleDateString('ne-NP')}
+            </p>
+          )}
         </div>
 
         {/* --- POPUP CONTENT --- */}
         <div 
           className="prose prose-sm prose-gray max-w-none text-gray-700"
-          dangerouslySetInnerHTML={{ __html: item.fullContent }}
+          dangerouslySetInnerHTML={{ 
+            __html: item.fullContent || item.description || item.shortText || `<p>${item.description}</p>`
+          }}
         />
 
         {/* --- FOOTER CLOSE BUTTON --- */}
@@ -140,7 +109,81 @@ function ProgramPopup({
 
 // --- MAIN PAGE ---
 export default function ProgramsPage() {
-  const [selectedItem, setSelectedItem] = useState<typeof PROGRAMS_DATA[0] | null>(null);
+  const [selectedItem, setSelectedItem] = useState<ProgramItem | null>(null);
+  const [programs, setPrograms] = useState<ProgramItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch data from backend
+  useEffect(() => {
+    const fetchPrograms = async () => {
+      try {
+        setLoading(true);
+        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:8000';
+        const endpoint = `${baseUrl}/api/api/program/`;
+        
+        console.log('Fetching programs from:', endpoint);
+        
+        const response = await fetch(endpoint);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data: ProgramItem[] = await response.json();
+        
+        // Filter only published items if is_published field exists
+        const publishedPrograms = data.filter(item => item.is_published !== false);
+        setPrograms(publishedPrograms);
+        setError(null);
+      } catch (err) {
+        console.error("Error fetching programs:", err);
+        setError(err instanceof Error ? err.message : "Failed to load programs");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPrograms();
+  }, []);
+
+  // Loading state
+  if (loading) {
+    return (
+      <section className="relative bg-white py-24 min-h-screen overflow-hidden">
+        <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-center items-center min-h-[400px]">
+            <div className="text-center">
+              <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-[#8B1A1A] border-r-transparent"></div>
+              <p className="mt-4 text-gray-600">Loading programs...</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <section className="relative bg-white py-24 min-h-screen overflow-hidden">
+        <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+            <p className="text-red-600">Error loading programs: {error}</p>
+            <p className="text-sm text-gray-500 mt-2">
+              Attempted to fetch from: {process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:8000'}/api/api/program/
+            </p>
+            <button 
+              onClick={() => window.location.reload()} 
+              className="mt-4 px-4 py-2 bg-[#8B1A1A] text-white rounded-lg hover:bg-[#6B1414] transition-colors"
+            >
+              Retry
+            </button>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="relative bg-white py-24 min-h-screen overflow-hidden">
@@ -169,7 +212,7 @@ export default function ProgramsPage() {
 
         {/* --- PROGRAMS GRID --- */}
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {PROGRAMS_DATA.map((item) => (
+          {programs.map((item) => (
             <div
               key={item.id}
               onClick={() => setSelectedItem(item)}
@@ -178,11 +221,20 @@ export default function ProgramsPage() {
               {/* --- IMAGE --- */}
               <div className="relative h-48 w-full bg-gray-100">
                 <Image
-                  src={item.image}
+                  src={item.image_url || item.image || "/images/placeholder.jpg"}
                   alt={item.title}
                   fill
                   className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = "/images/placeholder.jpg";
+                  }}
                 />
+                {item.is_featured && (
+                  <div className="absolute top-2 right-2 bg-[#8B1A1A] text-white text-xs px-2 py-1 rounded-full">
+                    विशेष
+                  </div>
+                )}
               </div>
 
               {/* --- TEXT CONTENT --- */}
@@ -191,9 +243,16 @@ export default function ProgramsPage() {
                   {item.title}
                 </h3>
                 <p className="mt-2 text-sm text-gray-600 line-clamp-2 flex-grow">
-                  {item.shortText}
+                  {item.shortText || item.description}
                 </p>
                 
+                {/* --- METADATA --- */}
+                {item.view_count !== undefined && (
+                  <div className="mt-2 text-xs text-gray-400">
+                    👁️ {item.view_count} पटक हेरिएको
+                  </div>
+                )}
+
                 {/* --- READ MORE LINK --- */}
                 <div className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-[#8B1A1A] hover:text-[#a02020] transition-colors">
                   थप पढ्नुहोस्
@@ -203,6 +262,13 @@ export default function ProgramsPage() {
             </div>
           ))}
         </div>
+
+        {/* --- EMPTY STATE --- */}
+        {programs.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-gray-500">कुनै कार्यक्रमहरू उपलब्ध छैनन्।</p>
+          </div>
+        )}
 
       </div>
 

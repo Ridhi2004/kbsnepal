@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django import forms
-from .models import InfoItem
+from .models import *
 
 class InfoItemAdminForm(forms.ModelForm):
     class Meta:
@@ -92,3 +92,5 @@ class InfoItemAdmin(admin.ModelAdmin):
         queryset.update(is_featured=False)
     remove_featured.short_description = 'Remove featured status'
 
+
+admin.site.register(Program)

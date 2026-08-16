@@ -1,18 +1,15 @@
 from django.shortcuts import render
-from rest_framework import viewsets, status, generics
+from rest_framework.viewsets import ModelViewSet
+from rest_framework import generics
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
-from .models import InfoItem
-from .serializers import (
-    InfoItemSerializer, 
-    InfoItemListSerializer, 
-    InfoItemDetailSerializer
-)
+from .models import *
+from .serializers import *
 
-class InfoItemViewSet(viewsets.ModelViewSet):
+class InfoItemViewSet(ModelViewSet):
     """
     ViewSet for InfoItem model with additional actions
     """
@@ -126,28 +123,32 @@ class InfoItemViewSet(viewsets.ModelViewSet):
     #         'views': item.view_count
     #     })
 
-class InfoItemListView(generics.ListAPIView):
-    """
-    Simple list view for information items (matches frontend exactly)
-    """
-    queryset = InfoItem.objects.filter(is_published=True).order_by('-published_date')
-    serializer_class = InfoItemListSerializer
+# class InfoItemListView(generics.ListAPIView):
+#     """
+#     Simple list view for information items (matches frontend exactly)
+#     """
+#     queryset = InfoItem.objects.filter(is_published=True).order_by('-published_date')
+#     serializer_class = InfoItemListSerializer
     
-    def get_serializer_context(self):
-        context = super().get_serializer_context()
-        context.update({'request': self.request})
-        return context
+#     def get_serializer_context(self):
+#         context = super().get_serializer_context()
+#         context.update({'request': self.request})
+#         return context
 
-class InfoItemDetailView(generics.RetrieveAPIView):
-    """
-    Simple detail view for a single information item
-    """
-    queryset = InfoItem.objects.filter(is_published=True)
-    serializer_class = InfoItemDetailSerializer
+# class InfoItemDetailView(generics.RetrieveAPIView):
+#     """
+#     Simple detail view for a single information item
+#     """
+#     queryset = InfoItem.objects.filter(is_published=True)
+#     serializer_class = InfoItemDetailSerializer
     
-    def retrieve(self, request, *args, **kwargs):
-        """Override retrieve to increment view count"""
-        instance = self.get_object()
-        instance.increment_view_count()
-        serializer = self.get_serializer(instance)
-        return Response(serializer.data)
+#     def retrieve(self, request, *args, **kwargs):
+#         """Override retrieve to increment view count"""
+#         instance = self.get_object()
+#         instance.increment_view_count()
+#         serializer = self.get_serializer(instance)
+#         return Response(serializer.data)
+
+class ProgramViewSet(ModelViewSet):
+    queryset=Program.objects.all()
+    serializer_class=ProgramSerializers

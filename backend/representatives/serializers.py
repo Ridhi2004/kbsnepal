@@ -20,7 +20,7 @@ class RepresentativeSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Representative
-        fields = ['id', 'zone', 'zone_number', 'members']
+        fields = ['id', 'zone_number', 'members']
         read_only_fields = ['id']
 
 class RepresentativeCreateSerializer(serializers.ModelSerializer):
@@ -28,7 +28,7 @@ class RepresentativeCreateSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Representative
-        fields = ['zone', 'zone_number', 'members']
+        fields = [ 'zone_number', 'members']
     
     def create(self, validated_data):
         members_data = validated_data.pop('members')
@@ -42,7 +42,7 @@ class RepresentativeCreateSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         members_data = validated_data.pop('members', None)
         
-        instance.zone = validated_data.get('zone', instance.zone)
+        instance.zone = validated_data.get( instance.zone)
         instance.zone_number = validated_data.get('zone_number', instance.zone_number)
         instance.save()
         

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import InfoItem
+from .models import *
 from django.utils.html import strip_tags
 
 class InfoItemSerializer(serializers.ModelSerializer):
@@ -90,3 +90,10 @@ class InfoItemDetailSerializer(serializers.ModelSerializer):
                 return request.build_absolute_uri(obj.image.url)
             return obj.image.url
         return None
+
+
+
+class ProgramSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = Program
+        fields = "__all__"

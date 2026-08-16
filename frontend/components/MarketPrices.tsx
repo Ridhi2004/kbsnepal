@@ -1,57 +1,111 @@
+"use client";
+
+import { useState, useEffect } from "react";
+
+// --- DATA STRUCTURE ---
 type PriceRow = {
   no: number;
   item: string;
   old1: number | null;
   old2: number | null;
-  current: number;
+  current1: number;
+  current2: number;
 };
 
-const PRICES: PriceRow[] = [
-  { no: 1, item: "त्रिशुलीको पोखरेली चामल", old1: 75, old2: 70, current: 90 },
-  { no: 2, item: "स्टिम जिरामसिनो चामल", old1: 70, old2: null, current: 70 },
-  { no: 3, item: "लक्ष ग्रेन वासमती चामल", old1: 130, old2: 120, current: 130 },
-  { no: 4, item: "स्टिम सोना चामल", old1: 55, old2: 55, current: 60 },
-  { no: 5, item: "ताइचिन चिउरा", old1: 140, old2: 120, current: 130 },
-  { no: 6, item: "तराई ताइचिन चिउरा", old1: 60, old2: null, current: 70 },
-  { no: 7, item: "मसिनो चामल (स्थानीय)", old1: 85, old2: 80, current: 95 },
-  { no: 8, item: "सुन्तला खसीको मासु", old1: 650, old2: 640, current: 680 },
-  { no: 9, item: "कालो भेडाको मासु", old1: 750, old2: 730, current: 760 },
-  { no: 10, item: "खसीको मासु (लोकल)", old1: 600, old2: 580, current: 620 },
-  { no: 11, item: "चना (सुक्खा)", old1: 160, old2: 150, current: 175 },
-  { no: 12, item: "मुगीको दाल", old1: 140, old2: 130, current: 155 },
-  { no: 13, item: "कागती (लोकल)", old1: 120, old2: 110, current: 140 },
-  { no: 14, item: "भेडाको मासु (लोकल)", old1: 850, old2: 820, current: 880 },
-  { no: 15, item: "घिउ (पाश्चराइज्ड)", old1: 450, old2: 440, current: 480 },
-  { no: 16, item: "कागती (लोकल)", old1: 120, old2: 110, current: 140 },
-  { no: 17, item: "भेडाको मासु (लोकल)", old1: 850, old2: 820, current: 880 },
-  { no: 18, item: "घिउ (पाश्चराइज्ड)", old1: 450, old2: 440, current: 480 },
-];
-
-function trend(row: PriceRow) {
-  const reference = row.old2 ?? row.old1;
-  if (reference === null) return "same" as const;
-  if (row.current > reference) return "up" as const;
-  if (row.current < reference) return "down" as const;
-  return "same" as const;
-}
-
-function TrendBadge({ direction }: { direction: "up" | "down" | "same" }) {
-  const styles = {
-    up: "bg-emerald-600 text-white shadow-sm shadow-emerald-600/30",
-    down: "bg-[#8B1A1A] text-white shadow-sm shadow-[#8B1A1A]/30",
-    same: "bg-gray-200 text-gray-500",
-  } as const;
-  
-  const arrow = { up: "▲", down: "▼", same: "–" } as const;
-  
-  return (
-    <span className={`inline-flex h-6 w-6 items-center justify-center rounded-full text-[10px] font-bold ${styles[direction]}`}>
-      {arrow[direction]}
-    </span>
-  );
-}
+// API response type
+type ApiPriceRow = {
+  no: number;
+  item: string;
+  old1: string;
+  old2: string;
+  current1: string;
+  current2: string;
+};
 
 export default function MarketPrices() {
+  const [prices, setPrices] = useState<PriceRow[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch data from backend
+  useEffect(() => {
+    const fetchPrices = async () => {
+      try {
+        setLoading(true);
+        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:8000';
+        const endpoint = `${baseUrl}/api/api/prices/`;
+        
+        console.log('Fetching prices from:', endpoint);
+        
+        const response = await fetch(endpoint);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data: ApiPriceRow[] = await response.json();
+        
+        // Transform API data to match PriceRow type
+        const transformedData: PriceRow[] = data.map((item) => ({
+          no: item.no,
+          item: item.item,
+          old1: item.old1 ? parseFloat(item.old1) : null,
+          old2: item.old2 ? parseFloat(item.old2) : null,
+          current1: parseFloat(item.current1),
+          current2: parseFloat(item.current2),
+        }));
+        
+        setPrices(transformedData);
+        setError(null);
+      } catch (err) {
+        console.error("Error fetching prices:", err);
+        setError(err instanceof Error ? err.message : "Failed to load prices");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPrices();
+  }, []);
+
+  // Loading state
+  if (loading) {
+    return (
+      <section id="prices" className="relative bg-white py-20 overflow-hidden">
+        <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-center items-center min-h-[400px]">
+            <div className="text-center">
+              <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-[#8B1A1A] border-r-transparent"></div>
+              <p className="mt-4 text-gray-600">Loading market prices...</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <section id="prices" className="relative bg-white py-20 overflow-hidden">
+        <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+            <p className="text-red-600">Error loading prices: {error}</p>
+            <p className="text-sm text-gray-500 mt-2">
+              Attempted to fetch from: {process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:8000'}/api/api/prices/
+            </p>
+            <button 
+              onClick={() => window.location.reload()} 
+              className="mt-4 px-4 py-2 bg-[#8B1A1A] text-white rounded-lg hover:bg-[#6B1414] transition-colors"
+            >
+              Retry
+            </button>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section id="prices" className="relative bg-white py-20 overflow-hidden">
       
@@ -86,7 +140,7 @@ export default function MarketPrices() {
             </h2>
           </div>
           <p className="max-w-sm text-sm text-gray-800">
-            मूल्य प्रति किलोग्राम, रुपैयाँमा। तुलनाका लागि अघिल्लो दुई अवधिको मूल्य पनि देखाइएको छ।
+            मूल्य प्रति किलोग्राम/लिटर, रुपैयाँमा। तुलनाका लागि अघिल्लो दुई अवधिको मूल्य पनि देखाइएको छ।
           </p>
         </div>
 
@@ -96,7 +150,7 @@ export default function MarketPrices() {
           {/* Added scrollbar-thin & scrollbar-thumb-red styling */}
           <div className="max-h-[500px] overflow-y-auto rounded-3xl scrollbar-thin scrollbar-thumb-[#8B1A1A] scrollbar-track-transparent">
             <div className="overflow-x-auto">
-              <table className="w-full min-w-[640px] border-collapse text-left text-sm">
+              <table className="w-full min-w-[800px] border-collapse text-left text-sm">
                 
                 {/* Sticky Header */}
                 <thead className="sticky top-0 z-10 bg-white/90 backdrop-blur-md shadow-[0_4px_12px_-6px_rgba(139,26,26,0.08)]">
@@ -105,14 +159,13 @@ export default function MarketPrices() {
                     <th className="px-6 py-5 font-medium">विवरण — प्रति किलो</th>
                     <th className="px-6 py-5 font-medium">पुरानो मूल्य १</th>
                     <th className="px-6 py-5 font-medium">पुरानो मूल्य २</th>
-                    <th className="px-6 py-5 font-medium">हालको मूल्य</th>
-                    <th className="px-6 py-5 font-medium">प्रवृत्ति</th>
+                    <th className="px-6 py-5 font-medium">हालको मूल्य १</th>
+                    <th className="px-6 py-5 font-medium">हालको मूल्य २</th>
                   </tr>
                 </thead>
                 
                 <tbody className="divide-y divide-[#8B1A1A]/10">
-                  {/* REMOVED .slice(0, 10) SO YOU CAN TEST THE SCROLL WITH ALL 15 ITEMS */}
-                  {PRICES.map((row) => (
+                  {prices.map((row) => (
                     <tr 
                       key={row.no} 
                       className="group transition-all duration-200 even:bg-[#8B1A1A]/[0.02] hover:bg-[#8B1A1A]/[0.05]"
@@ -124,10 +177,10 @@ export default function MarketPrices() {
                       <td className="px-6 py-4.5 text-gray-500">{row.old1 ?? "—"}</td>
                       <td className="px-6 py-4.5 text-gray-500">{row.old2 ?? "—"}</td>
                       <td className="px-6 py-4.5 font-display text-lg font-semibold text-[#8B1A1A]">
-                        रु {row.current}
+                        रु {row.current1}
                       </td>
-                      <td className="px-6 py-4.5">
-                        <TrendBadge direction={trend(row)} />
+                      <td className="px-6 py-4.5 font-display text-lg font-semibold text-[#8B1A1A]">
+                        रु {row.current2}
                       </td>
                     </tr>
                   ))}
@@ -137,6 +190,14 @@ export default function MarketPrices() {
           </div>
         </div>
       </div>
+
+      {/* CSS for scrollbar */}
+      <style>{`
+        .scrollbar-thin::-webkit-scrollbar { width: 6px; }
+        .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+        .scrollbar-thin::-webkit-scrollbar-thumb { background: #8B1A1A; border-radius: 9999px; }
+        .scrollbar-thin { scrollbar-width: thin; }
+      `}</style>
     </section>
   );
 }

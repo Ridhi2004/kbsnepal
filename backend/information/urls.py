@@ -5,14 +5,13 @@ from django.conf.urls.static import static
 from . import views
 
 router = DefaultRouter()
-router.register(r'info', views.InfoItemViewSet, basename='info')
+router.register(r'info', views.InfoItemViewSet, basename='info'),
+router.register(r'program',views.ProgramViewSet,basename='program')
 
 urlpatterns = [
-    path('api/', include(router.urls)),
-    path('api/info/simple/', views.InfoItemListView.as_view(), name='info-list-simple'),
-    path('api/info/<int:pk>/detail/', views.InfoItemDetailView.as_view(), name='info-detail-simple'),
+    path('api/', include(router.urls))
+#     path('api/info/simple/', views.InfoItemListView.as_view(), name='info-list-simple'),
+#     path('api/info/<int:pk>/detail/', views.InfoItemDetailView.as_view(), name='info-detail-simple'),
 ]
 
 # Serve media files in development
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
