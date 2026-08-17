@@ -130,7 +130,7 @@ export default function Footer() {
       </div>
 
       {/* Copyright Bar */}
-      <div className="relative z-10 border-t border-[#8B1A1A]/10 py-6 text-center text-xs text-gray-400">
+      <div className="relative z-10 border-t border-[#8B1A1A]/10 py-6 text-center text-xs text-black">
         © {new Date().getFullYear()} नेपाल खुद्रा व्यापार संघ (KBS Nepal). सर्वाधिकार सुरक्षित।
       </div>
     </footer>

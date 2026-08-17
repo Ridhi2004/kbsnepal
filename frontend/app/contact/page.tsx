@@ -1,25 +1,134 @@
-
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+
+interface ContactFormData {
+  name: string;
+  email: string;
+  message: string;
+}
+
+interface ApiResponse {
+  success: boolean;
+  message: string;
+  errors?: Record<string, string[]>;
+}
 
 export default function ContactPage() {
-  const [formData, setFormData] = useState({
+  const router = useRouter();
+  const [formData, setFormData] = useState<ContactFormData>({
     name: "",
     email: "",
     message: "",
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+    if (fieldErrors[name]) {
+      setFieldErrors({ ...fieldErrors, [name]: "" });
+    }
+    if (error) setError(null);
+    if (success) setSuccess(null);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    alert("सन्देश पठाइएको छ! (Demo mode)");
-    setFormData({ name: "", email: "", message: "" });
+    
+    setError(null);
+    setSuccess(null);
+    setFieldErrors({});
+    setLoading(true);
+
+    try {
+      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://127.0.0.1:8000';
+      const endpoint = `${baseUrl}/api/message/`;
+      
+      console.log(`🚀 Submitting to: ${endpoint}`);
+      console.log('📝 Form data:', formData);
+      
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(formData),
+      });
+
+      console.log('📊 Response status:', response.status);
+
+      // Get response as text first
+      const responseText = await response.text();
+      console.log('📄 Response text:', responseText);
+
+      let data: ApiResponse;
+      try {
+        data = JSON.parse(responseText);
+        console.log('✅ Parsed data:', data);
+      } catch (parseError) {
+        console.error('❌ Failed to parse response:', parseError);
+        setError("सर्भरबाट अमान्य प्रतिक्रिया प्राप्त भयो। कृपया पुन: प्रयास गर्नुहोस्।");
+        setLoading(false);
+        return;
+      }
+
+      if (response.ok && data.success) {
+        setSuccess(data.message || "सन्देश सफलतापूर्वक पठाइयो! हामी चाँडै सम्पर्क गर्नेछौं।");
+        setFormData({ name: "", email: "", message: "" });
+        
+        setTimeout(() => {
+          router.push("/");
+        }, 3000);
+      } else {
+        if (data.errors) {
+          const errors: Record<string, string> = {};
+          Object.keys(data.errors).forEach((key) => {
+            errors[key] = data.errors?.[key]?.join(", ") || "Invalid input";
+          });
+          setFieldErrors(errors);
+          setError(data.message || "कृपया फारममा देखाइएका त्रुटिहरू सच्याउनुहोस्।");
+        } else {
+          setError(data.message || data.detail || `सर्भर त्रुटि: ${response.status}`);
+        }
+      }
+    } catch (err) {
+      console.error("❌ Error submitting contact message:", err);
+      
+      if (err instanceof Error) {
+        if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
+          setError(`🔴 ब्याकेन्ड सर्भरसँग जडान हुन सकेन।
+
+कृपया जाँच गर्नुहोस्:
+
+1. ब्याकेन्ड सर्भर चलिरहेको छ:
+   python manage.py runserver
+
+2. सही URL:
+   ${process.env.NEXT_PUBLIC_BASE_URL || 'http://127.0.0.1:8000'}/api/message/
+
+3. CORS सेटिङ सही छ:
+   settings.py मा CORS_ALLOW_ALL_ORIGINS = True
+
+4. आफ्नो ब्राउजरमा यो URL खोल्नुहोस्:
+   ${process.env.NEXT_PUBLIC_BASE_URL || 'http://127.0.0.1:8000'}/api/message/`);
+        } else {
+          setError(err.message);
+        }
+      } else {
+        setError("नेटवर्क समस्या भएको छ। कृपया आफ्नो इन्टरनेट जडान जाँच गर्नुहोस्।");
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -51,12 +160,48 @@ export default function ContactPage() {
           
           {/* LEFT: CONTACT FORM */}
           <div className="rounded-3xl border border-[#8B1A1A]/10 bg-white/80 backdrop-blur-sm p-8 shadow-xl shadow-[#8B1A1A]/5">
+            
+            {/* Success Message */}
+            {success && (
+              <div className="mb-6 rounded-xl bg-green-50 border border-green-200 p-4 text-green-700 text-sm">
+                <div className="flex items-start gap-3">
+                  <svg className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <div>
+                    <p className="font-medium">{success}</p>
+                    <p className="text-xs text-green-600 mt-1">पृष्ठ पुन: निर्देशित हुँदै...</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Error Message */}
+            {error && (
+              <div className="mb-6 rounded-xl bg-red-50 border border-red-200 p-4 text-red-700 text-sm">
+                <div className="flex items-start gap-3">
+                  <svg className="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <div className="flex-1">
+                    <p className="whitespace-pre-line">{error}</p>
+                    <button
+                      onClick={() => window.location.reload()}
+                      className="mt-2 text-sm text-red-600 hover:text-red-800 font-medium underline"
+                    >
+                      पुन: प्रयास गर्नुहोस्
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <form onSubmit={handleSubmit} className="space-y-6">
               
               {/* Name Field */}
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                  नाम :
+                  नाम <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -65,15 +210,23 @@ export default function ContactPage() {
                   value={formData.name}
                   onChange={handleChange}
                   required
-                  className="w-full rounded-xl border border-[#8B1A1A]/20 bg-white/50 px-4 py-3 text-gray-800 outline-none transition-all focus:border-[#8B1A1A] focus:ring-2 focus:ring-[#8B1A1A]/20 placeholder:text-gray-400"
+                  disabled={loading}
+                  className={`w-full rounded-xl border ${
+                    fieldErrors.name 
+                      ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20' 
+                      : 'border-[#8B1A1A]/20 focus:border-[#8B1A1A] focus:ring-[#8B1A1A]/20'
+                  } bg-white/50 px-4 py-3 text-gray-800 outline-none transition-all focus:ring-2 placeholder:text-gray-400 disabled:opacity-50`}
                   placeholder="तपाईंको नाम लेख्नुहोस्"
                 />
+                {fieldErrors.name && (
+                  <p className="mt-1 text-sm text-red-600">{fieldErrors.name}</p>
+                )}
               </div>
 
               {/* Email Field */}
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                  इमेल :
+                  इमेल <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="email"
@@ -82,15 +235,23 @@ export default function ContactPage() {
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  className="w-full rounded-xl border border-[#8B1A1A]/20 bg-white/50 px-4 py-3 text-gray-800 outline-none transition-all focus:border-[#8B1A1A] focus:ring-2 focus:ring-[#8B1A1A]/20 placeholder:text-gray-400"
+                  disabled={loading}
+                  className={`w-full rounded-xl border ${
+                    fieldErrors.email 
+                      ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20' 
+                      : 'border-[#8B1A1A]/20 focus:border-[#8B1A1A] focus:ring-[#8B1A1A]/20'
+                  } bg-white/50 px-4 py-3 text-gray-800 outline-none transition-all focus:ring-2 placeholder:text-gray-400 disabled:opacity-50`}
                   placeholder="example@email.com"
                 />
+                {fieldErrors.email && (
+                  <p className="mt-1 text-sm text-red-600">{fieldErrors.email}</p>
+                )}
               </div>
 
               {/* Message Field */}
               <div>
                 <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
-                  सन्देश लेख्नुहोस् :
+                  सन्देश लेख्नुहोस् <span className="text-red-500">*</span>
                 </label>
                 <textarea
                   id="message"
@@ -99,17 +260,36 @@ export default function ContactPage() {
                   value={formData.message}
                   onChange={handleChange}
                   required
-                  className="w-full rounded-xl border border-[#8B1A1A]/20 bg-white/50 px-4 py-3 text-gray-800 outline-none transition-all focus:border-[#8B1A1A] focus:ring-2 focus:ring-[#8B1A1A]/20 placeholder:text-gray-400 resize-none"
+                  disabled={loading}
+                  className={`w-full rounded-xl border ${
+                    fieldErrors.message 
+                      ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20' 
+                      : 'border-[#8B1A1A]/20 focus:border-[#8B1A1A] focus:ring-[#8B1A1A]/20'
+                  } bg-white/50 px-4 py-3 text-gray-800 outline-none transition-all focus:ring-2 placeholder:text-gray-400 resize-none disabled:opacity-50`}
                   placeholder="तपाईंको सन्देश यहाँ लेख्नुहोस्..."
                 />
+                {fieldErrors.message && (
+                  <p className="mt-1 text-sm text-red-600">{fieldErrors.message}</p>
+                )}
               </div>
 
               {/* Submit Button */}
               <button
                 type="submit"
-                className="w-full rounded-xl bg-[#8B1A1A] px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[#8B1A1A]/25 transition-all hover:-translate-y-1 hover:bg-[#a02020] hover:shadow-xl"
+                disabled={loading}
+                className="w-full rounded-xl bg-[#8B1A1A] px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[#8B1A1A]/25 transition-all hover:-translate-y-1 hover:bg-[#a02020] hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
               >
-                सन्देश पठाउनुहोस्
+                {loading ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    पठाउँदै...
+                  </span>
+                ) : (
+                  "सन्देश पठाउनुहोस्"
+                )}
               </button>
             </form>
           </div>
@@ -177,10 +357,9 @@ export default function ContactPage() {
           </div>
         </div>
 
-        {/* --- GOOGLE MAPS SECTION (ADDED) --- */}
+        {/* --- GOOGLE MAPS SECTION --- */}
         <div className="mt-16">
           <div className="rounded-3xl border border-[#8B1A1A]/10 bg-white/80 backdrop-blur-sm p-3 shadow-xl shadow-[#8B1A1A]/5">
-            {/* Replace the `src` URL with your exact Google Maps embed link */}
             <iframe
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3532.511933719104!2d85.3162293!3d27.6997576!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39eb19a04975ad53%3A0x3bd08c5a2a5fe9da!2sTeku%2C%20Kathmandu%2044600%2C%20Nepal!5e0!3m2!1sen!2sus!4v1700000000000!5m2!1sen!2sus"
               width="100%"

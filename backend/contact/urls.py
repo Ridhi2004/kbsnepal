@@ -1,19 +1,13 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import *
-   
 
 router = DefaultRouter()
-router.register(r'messages', SiteViewSet, basename='contact')
+# router.register(r'contact', SiteViewSet, basename='contact')
 
 urlpatterns = [
-    
-    # path('api/contact/', ContactMessageCreateView.as_view(), name='contact-create'),
-    # path('api/contact/list/', ContactMessageListView.as_view(), name='contact-list'),
-    # path('api/contact/<int:pk>/', ContactMessageDetailView.as_view(), name='contact-detail'),
-
+    # Make sure the URL pattern is correct
+    path('suggestions/', SuggestionAPIView.as_view(), name='suggestion-create'),
+    path('message/', ContactMessageAPIView.as_view(), name='message'),
     path('', include(router.urls)),
-    
-  
 ]
-
